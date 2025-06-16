@@ -1,0 +1,242 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basker Gummadi - Digital Health Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #6B7280, #1E3A8A);
+            color: #1F2937;
+            font-family: 'Arial', sans-serif;
+        }
+        .section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .skill-card:hover .skill-icon {
+            transform: scale(1.2);
+        }
+        .scroll-btn {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-blue-900 text-white p-4 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Basker Gummadi</h1>
+            <div class="space-x-4">
+                <a href="#home" class="hover:text-blue-300">Home</a>
+                <a href="#skills" class="hover:text-blue-300">Skills</a>
+                <a href="#experience" class="hover:text-blue-300">Experience</a>
+                <a href="#education" class="hover:text-blue-300">Education</a>
+                <a href="#contact" class="hover:text-blue-300">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="section bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+        <div class="container mx-auto text-center">
+            <img src="IMG_2984.JPG" alt="Profile Picture" class="rounded-full w-32 h-32 mx-auto mb-4 border-4 border-white">
+            <h2 class="text-4xl font-bold mb-4">Basker Gummadi, PMP, PgMP</h2>
+            <p class="text-xl mb-6">Strategic Digital Health & Technology Director</p>
+            <p class="max-w-2xl mx-auto">With over 20 years of experience, I lead global digital strategy and technology transformation in pharmaceuticals, driving innovation with AI, ML, and omnichannel engagement.</p>
+            <a href="#skills" class="inline-block mt-6 px-6 py-3 bg-white text-blue-900 rounded-full font-semibold scroll-btn">Explore My Work</a>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section bg-white">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-8">Skills & Expertise</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div class="card skill-card bg-blue-100 p-6 rounded-lg text-center">
+                    <div class="skill-icon text-4xl mb-4">🧠</div>
+                    <h3 class="text-xl font-semibold">Digital Health Strategy</h3>
+                    <p>Architecting end-to-end digital roadmaps for impactful outcomes.</p>
+                </div>
+                <div class="card skill-card bg-purple-100 p-6 rounded-lg text-center">
+                    <div class="skill-icon text-4xl mb-4">🤖</div>
+                    <h3 class="text-xl font-semibold">AI & Machine Learning</h3>
+                    <p>Implementing AI/ML and predictive analytics for innovation.</p>
+                </div>
+                <div class="card skill-card bg-green-100 p-6 rounded-lg text-center">
+                    <div class="skill-icon text-4xl mb-4">👥</div>
+                    <h3 class="text-xl font-semibold">Cross-Functional Leadership</h3>
+                    <p>Leading high-performing teams across global initiatives.</p>
+                </div>
+                <div class="card skill-card bg-yellow-100 p-6 rounded-lg text-center">
+                    <div class="skill-icon text-4xl mb-4">📊</div>
+                    <h3 class="text-xl font-semibold">Data Integration & Analytics</h3>
+                    <p>Leveraging data for omnichannel engagement and insights.</p>
+                </div>
+                <div class="card skill-card bg-red-100 p-6 rounded-lg text-center">
+                    <div class="skill-icon text-4xl mb-4">🚀</div>
+                    <h3 class="text-xl font-semibold">Innovation & Entrepreneurship</h3>
+                    <p>Driving entrepreneurial mindset in digital health solutions.</p>
+                </div>
+                <div class="card skill-card bg-indigo-100 p-6 rounded-lg text-center">
+                    <div class="skill-icon text-4xl mb-4">⚙️</div>
+                    <h3 class="text-xl font-semibold">Agile Product Management</h3>
+                    <p>Delivering products with agile methodologies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="section bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-8">Professional Experience</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card bg-white text-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold">GlaxoSmithKline Beecham, Sr Director</h3>
+                    <p class="text-sm mb-2">Jul 2023 - Present</p>
+                    <ul class="list-disc pl-5">
+                        <li>Led global digital health portfolio with AI, ML, and wearables.</li>
+                        <li>Developed omnichannel strategy for Chronic Refractory Cough.</li>
+                        <li>Championed ethical AI framework for transparency and equity.</li>
+                    </ul>
+                </div>
+                <div class="card bg-white text-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold">Gilead Sciences, Sr Director</h3>
+                    <p class="text-sm mb-2">Feb 2022 - Jul 2023</p>
+                    <ul class="list-disc pl-5">
+                        <li>Published Digital Health Strategy for clinical development.</li>
+                        <li>Led Neo Labs for patient experience enhancements.</li>
+                        <li>Delivered MVP for Medication Adherence solution.</li>
+                    </ul>
+                </div>
+                <div class="card bg-white text-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold">BMS/Celgene, Sr Director Medical Affairs</h3>
+                    <p class="text-sm mb-2">May 2019 - Feb 2022</p>
+                    <ul class="list-disc pl-5">
+                        <li>Architected digital health app for cancer patient monitoring.</li>
+                        <li>Led digital therapeutics and wearables initiatives.</li>
+                        <li>Ensured GDPR, HIPAA compliance for data architecture.</li>
+                    </ul>
+                </div>
+                <div class="card bg-white text-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold">Bayer Health Care Pharma, Digital Innovation Sr Manager</h3>
+                    <p class="text-sm mb-2">May 2012 - Jun 2019</p>
+                    <ul class="list-disc pl-5">
+                        <li>Launched BETACONNECT autoinjector with 95%+ satisfaction.</li>
+                        <li>Contributed to FDA’s Software as a Medical Device guidance.</li>
+                        <li>Built digital health personalization capabilities.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="section bg-white">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-8">Education</h2>
+            <div class="space-y-6">
+                <div class="bg-blue-100 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold">Temple University</h3>
+                    <p>Drug Development, Quality and Regulatory Affairs Certificate</p>
+                </div>
+                <div class="bg-blue-100 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold">Boston University</h3>
+                    <p>PMP, PgMP, Project Management Certificate</p>
+                </div>
+                <div class="bg-blue-100 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold">George Mason University</h3>
+                    <p>M.S. in Computer Science</p>
+                </div>
+                <div class="bg-blue-100 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold">Osmania University</h3>
+                    <p>B.S. in Electrical Engineering</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section bg-gradient-to-r from-indigo-600 to-blue-900 text-white">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">Get in Touch</h2>
+            <p class="text-lg mb-4">Email: <a href="mailto:basker.gummadi@gmail.com" class="underline">basker.gummadi@gmail.com</a></p>
+            <p class="text-lg mb-4">Phone: <a href="tel:+18622223862" class="underline">862-222-3862</a></p>
+            <p class="text-lg mb-4">Address: 3824 Trythall Street, Bethlehem, PA 18020</p>
+            <button onclick="showMessage()" class="px-6 py-3 bg-white text-blue-900 rounded-full font-semibold">Send a Message</button>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Contact button interaction
+        function showMessage() {
+            alert("Thank you for reaching out! Please send an email to basker.gummadi@gmail.com.");
+        }
+    </script>
+</body>
+</html>
